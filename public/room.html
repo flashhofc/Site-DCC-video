@@ -198,7 +198,7 @@
             try {
                 player = new YT.Player('player', {
                     height: '600', width: '100%', videoId: '',
-                    playerVars: { 'controls': isMod ? 1 : 0, 'disablekb': 1, 'rel': 0 },
+                    playerVars: { 'controls': isMod ? 1 : 0, 'disablekb': 1, 'rel': 0,'fs': 1 },
                     events: { 
                         'onReady': () => { 
                             if(player && typeof player.setVolume === 'function') player.setVolume(100); 
@@ -702,7 +702,8 @@
                 for(let i=0; i<9; i++) {
                     if(board[i] === "") {
                         board[i] = "O";
-                        let eval = minimax(board, depth + 1, false);
+                        let scoreEval = minimax(board, depth + 1, false);
+maxEval = Math.max(maxEval, scoreEval);
                         board[i] = "";
                         maxEval = Math.max(maxEval, eval);
                     }
@@ -713,7 +714,8 @@
                 for(let i=0; i<9; i++) {
                     if(board[i] === "") {
                         board[i] = "X";
-                        let eval = minimax(board, depth + 1, true);
+                        let scoreEval = minimax(board, depth + 1, true);
+minEval = Math.min(minEval, scoreEval);
                         board[i] = "";
                         minEval = Math.min(minEval, eval);
                     }
