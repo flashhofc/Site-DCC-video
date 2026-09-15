@@ -115,6 +115,10 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('seek-video', (data) => {
+    io.to(data.roomId).emit('action-seek', data.time);
+});
+
     socket.on('disconnect', () => {
         for (const roomId in rooms) {
             rooms[roomId].users = rooms[roomId].users.filter(u => u.id !== socket.id);

@@ -53,6 +53,7 @@
                 <div class="controls-row" style="margin-top: 20px;">
                     <button onclick="playVideo()" class="btn-green glow">▶ INICIAR MATERIAL</button>
                     <button onclick="pauseVideo()" class="btn-red glow">⏸ INTERROMPER</button>
+                    <button class="btn-restart" onclick="reiniciarVideo()" style="background-color: #ff9800; color: white; padding: 12px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase;">🔄 Reiniciar</button>
                     <button onclick="abrirMinigame()" class="btn-orange glow" style="background: #4a148c; border-color: #aa00ff; box-shadow: 0 0 15px #aa00ff;">🕹️ FLIPERAMA</button>
                 </div>
                 
@@ -126,6 +127,13 @@
                     }
                 });
 
+                socket.on('action-seek', (time) => {
+    if (player && player.seekTo) {
+        player.seekTo(time, true);
+        player.playVideo();
+    }
+});
+
                 socket.on('action-play', () => { if(player && typeof player.playVideo === 'function') player.playVideo(); });
                 socket.on('action-pause', () => { if(player && typeof player.pauseVideo === 'function') player.pauseVideo(); });
 
@@ -144,6 +152,17 @@
                 console.error("Erro crítico na inicialização da sala:", err);
             }
         });
+
+        function reiniciarVideo() {
+    // Envia o comando de seek/reinício para o socket sincronizar todos os operadores
+    if (typeof socket !== 'undefined') {
+        socket.emit('seek-video', { roomId: roomId, time: 0 });
+    }
+    if (typeof player !== 'undefined' && player.seekTo) {
+        player.seekTo(0, true);
+        player.playVideo();
+    }
+}
 
         function copiarLink() {
             const linkCopy = document.getElementById('linkCopy');
