@@ -113,25 +113,18 @@
                     if(btnFullscreen) btnFullscreen.classList.remove('hidden');
                 }
 
-                // Quando o moderador aperta o Play
-socket.on('action-play', () => {
-    console.log("Comando de Play recebido do servidor!");
-    // Se estiver usando a API do IFrame do YouTube:
-    if (typeof player !== 'undefined' && player.playVideo) {
-        player.playVideo();
-    }
-});
-
-// Quando o moderador muda o vídeo
-socket.on('sync-video', (data) => {
-    console.log("Sincronizando novo vídeo:", data.videoUrl);
-    const iframe = document.getElementById('youtubePlayer');
-    if(iframe) {
-        // Extrai o ID do vídeo e atualiza o src com autoplay
-        const videoId = extrairIdYouTube(data.videoUrl);
-        iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1`;
-    }
-});
+                socket.on('sync-video', (data) => {
+                    if(data && data.videoUrl) {
+                        urlAtual = data.videoUrl;
+                        if(player && typeof player.cueVideoById === 'function') {
+                            if (data.status === 'playing') player.loadVideoById(urlAtual);
+                            else player.cueVideoById(urlAtual);
+                        }
+                    }
+                    if(data && (data.status === 'paused' || data.status === 'waiting')) {
+                        if(player && typeof player.pauseVideo === 'function') player.pauseVideo();
+                    }
+                });
 
                 socket.on('action-play', () => { if(player && typeof player.playVideo === 'function') player.playVideo(); });
                 socket.on('action-pause', () => { if(player && typeof player.pauseVideo === 'function') player.pauseVideo(); });
@@ -198,14 +191,6 @@ socket.on('sync-video', (data) => {
                 console.error("Erro ao instanciar player do YouTube:", e);
             }
         }
-        <iframe id="youtubePlayer" 
-    src="https://www.youtube.com/embed/VIDEO_ID?enablejsapi=1&autoplay=1" 
-    width="100%" 
-    height="100%" 
-    frameborder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
-    allowfullscreen>
-</iframe>
 
         function playVideo() { if(socket) socket.emit('play-video', roomId); }
         function pauseVideo() { if(socket) socket.emit('pause-video', roomId); }
