@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+/* Efeito Scanline Militar */
+body::before {
+    content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+    pointer-events: none; z-index: 9999;
+}
+
+.bg-index { background: url('dcc.png') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.bg-room { background: url('dcc2.png') no-repeat center center fixed; background-size: cover; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+/* Paineis Táticos */
+.glass-container {
+    background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(8px);
+    padding: 30px; border-radius: 4px; text-align: center; color: white; position: relative;
+}
+
+.tactical-border {
+    border: 1px solid rgba(255, 50, 50, 0.4);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), inset 0 0 15px rgba(0, 0, 0, 0.9);
+}
+.tactical-border::before, .tactical-border::after {
+    content: ''; position: absolute; width: 20px; height: 20px; border: 2px solid #ff3b3b;
+}
+.tactical-border::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.tactical-border::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+/* Limite para a tela de login não ficar gigante */
+#loginScreen, #adminDashboard { width: 100%; max-width: 650px; margin: 0 auto; }
+
+.cyber-text { color: #ff3b3b; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,59,59,0.8); margin-bottom: 20px; font-weight: 700; }
+.logo-pequena { width: 140px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #ff3b3b; box-shadow: 0 0 15px #ff0000; }
+
+input {
+    width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.8); color: #fff; font-size: 16px; font-weight: bold; letter-spacing: 1px;
+}
+input:focus { outline: none; border-color: #ff3b3b; box-shadow: 0 0 10px rgba(255,59,59,0.5); }
+
+button {
+    width: 100%; padding: 14px; border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer; font-weight: 700; font-size: 16px; text-transform: uppercase;
+    transition: 0.2s; color: white; letter-spacing: 2px;
+}
+button:active { transform: scale(0.98); }
+
+.btn-red { background: rgba(220, 20, 60, 0.8); }
+.btn-red:hover { background: #ff1744; box-shadow: 0 0 20px #ff1744; border-color: #fff; }
+.btn-green { background: rgba(30, 130, 76, 0.8); }
+.btn-green:hover { background: #00e676; box-shadow: 0 0 20px #00e676; border-color: #fff; }
+.btn-orange { background: rgba(230, 81, 0, 0.8); }
+.btn-orange:hover { background: #ff9100; box-shadow: 0 0 20px #ff9100; border-color: #fff; }
+.btn-blue { background: rgba(1, 87, 155, 0.8); }
+.btn-blue:hover { background: #00b0ff; box-shadow: 0 0 20px #00b0ff; border-color: #fff; }
+
+.tab-menu { display: flex; gap: 5px; margin-bottom: 20px; }
+.tab-btn { background: rgba(30,30,30,0.8); color: #888; font-size: 14px; }
+.tab-btn.active { background: #ff3b3b; color: white; border-color: #ff3b3b; box-shadow: 0 0 15px rgba(255,59,59,0.5); }
+.log-box { text-align: left; background: rgba(0,0,0,0.9); padding: 15px; height: 200px; overflow-y: auto; border-left: 4px solid #ff3b3b; font-family: monospace; font-size: 13px; color: #00ff00; text-shadow: 0 0 3px #00ff00; }
+.hidden { display: none !important; }
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; justify-content: center; align-items: center; z-index: 999; }
+
+/* Sala e Controles Expandidos */
+.room-layout { display: flex; width: 95%; max-width: 1800px; gap: 25px; padding: 20px; align-items: flex-start; }
+.video-section { flex: 3; position: relative; width: 100%; max-width: 100%; }
+.video-frame { border: 2px solid #ff3b3b; overflow: hidden; background: black; box-shadow: 0 0 20px rgba(255,0,0,0.3); }
+.video-frame iframe { height: 600px !important; }
+.blocker { position: absolute; top: 0; left: 0; width: 100%; height: 600px; z-index: 10; }
+
+.controls-row { display: flex; gap: 10px; }
+.tactical-panel { background: rgba(0,0,0,0.9); padding: 15px; border: 1px solid #ff9800; display: flex; align-items: center; gap: 10px; margin-top: 15px; box-shadow: inset 0 0 10px rgba(255,152,0,0.2); }
+.tactical-panel span { color: #ff9800; font-weight: bold; letter-spacing: 1px; }
+.tactical-panel input { margin: 0; border: none; background: transparent; color: #fff; }
+.tactical-panel button { width: 160px; padding: 10px; font-size: 14px; }
+
+.sidebar { flex: 1; max-height: 80vh; overflow-y: auto; text-align: left; }
+.sidebar h3 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+.sidebar li { background: rgba(0,0,0,0.8); margin-bottom: 10px; padding: 12px; border-left: 4px solid #444; font-size: 15px; letter-spacing: 1px; }
+.status-ok { color: #00e676; text-shadow: 0 0 5px #00e676; }
+.status-bad { color: #ff1744; text-shadow: 0 0 5px #ff1744; animation: piscar 0.8s infinite; }
+@keyframes piscar { 50% { opacity: 0.2; } }
+
+/* Tela Cheia */
+.video-section:fullscreen, .video-section:-webkit-full-screen { background: black !important; border: none !important; padding: 0 !important; display: flex; justify-content: center; align-items: center; }
+.video-section:fullscreen .video-frame, .video-section:-webkit-full-screen .video-frame { width: 100vw; height: 100vh; border: none; }
+.video-section:fullscreen iframe, .video-section:-webkit-full-screen iframe { width: 100vw !important; height: 100vh !important; }
+.video-section:fullscreen .blocker, .video-section:-webkit-full-screen .blocker { width: 100vw; height: 100vh; }
+.video-section:fullscreen #btnFullscreen, .video-section:-webkit-full-screen #btnFullscreen { display: none !important; }

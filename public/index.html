@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>CENTRAL D.C.C</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-index">
+    
+    <div class="glass-container tactical-border" id="loginScreen">
+        <img src="dcc.png" alt="Logo DCC" class="logo-pequena">
+        <h2 class="cyber-text">ACESSO RESTRITO D.C.C</h2>
+        <input type="text" id="user" placeholder="Credencial">
+        <input type="password" id="pass" placeholder="Código de Acesso">
+        <button onclick="login()" class="btn-red glow">AUTENTICAR</button>
+    </div>
+
+    <div class="glass-container tactical-border hidden" id="adminDashboard" style="max-width: 650px;">
+        <h2>OPERAÇÃO ATIVA: <span id="loggedUser" class="cyber-text"></span></h2>
+        
+        <div class="tab-menu" id="menuAbas">
+            <button onclick="mostrarAba('sala')" class="tab-btn active" id="btn-sala">📺 Nova Diretriz</button>
+            <button onclick="mostrarAba('usuarios')" class="tab-btn" id="btn-usuarios">👥 Credenciamento</button>
+            <button onclick="mostrarAba('logs')" class="tab-btn" id="btn-logs">📝 Registros</button>
+        </div>
+
+        <div id="aba-sala" class="tab-content">
+            <input type="text" id="videoName" placeholder="Codinome do Treinamento">
+            <input type="text" id="videoUrl" placeholder="Link do Material (YouTube)">
+            <button onclick="criarSala()" class="btn-green glow">INICIAR OPERAÇÃO</button>
+        </div>
+
+        <div id="aba-usuarios" class="tab-content hidden">
+            <h3 style="margin-bottom:10px; color:#ff9800;">Autorizar Novo Instrutor</h3>
+            <input type="text" id="newUser" placeholder="Identificação do Instrutor">
+            <input type="password" id="newPass" placeholder="Senha de Acesso">
+            <button onclick="criarUsuario()" class="btn-orange glow">GERAR CREDENCIAL</button>
+        </div>
+
+        <div id="aba-logs" class="tab-content hidden">
+            <div id="listaLogs" class="log-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        let currentUser = ""; let currentRole = "";
+
+        function mostrarAba(aba) {
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+            document.getElementById(`aba-${aba}`).classList.remove('hidden');
+            document.getElementById(`btn-${aba}`).classList.add('active');
+            if(aba === 'logs') socket.emit('get-logs', currentRole);
+        }
+
+        function login() {
+            socket.emit('login', { user: document.getElementById('user').value, pass: document.getElementById('pass').value });
+        }
+
+        socket.on('login-success', (data) => {
+            currentUser = data.user; currentRole = data.role;
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            document.getElementById('loggedUser').innerText = currentUser.toUpperCase();
+
+            // Esconde botões se não for o Flash (Master)
+            if(currentRole !== 'master') {
+                document.getElementById('btn-usuarios').style.display = 'none';
+                document.getElementById('btn-logs').style.display = 'none';
+                document.getElementById('menuAbas').style.justifyContent = 'center';
+            }
+        });
+
+        socket.on('login-failed', () => alert('Acesso Negado! Credenciais inválidas.'));
+
+        function criarUsuario() {
+            const u = document.getElementById('newUser').value;
+            const p = document.getElementById('newPass').value;
+            if(u && p) socket.emit('create-user', { adminUser: currentUser, newUser: u, newPass: p });
+        }
+        socket.on('user-created', (res) => { alert(res.msg); document.getElementById('newUser').value = ''; document.getElementById('newPass').value = ''; });
+
+        socket.on('load-logs', (logs) => { document.getElementById('listaLogs').innerHTML = logs.map(l => `<p>${l}</p>`).join(''); });
+        socket.on('new-log', (log) => { if(currentRole === 'master'){ const box = document.getElementById('listaLogs'); box.innerHTML = `<p>${log}</p>` + box.innerHTML; } });
+
+        function criarSala() {
+            const url = document.getElementById('videoUrl').value;
+            const name = document.getElementById('videoName').value;
+            if(!url || !name) return alert("Dados insuficientes para operação!");
+
+            const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})/;
+            const match = url.match(regex);
+            socket.emit('create-room', { videoUrl: (match && match[1]) ? match[1] : url, videoName: name, adminName: currentUser });
+        }
+        socket.on('room-created', (roomId) => window.location.href = `/room.html?room=${roomId}&mod=true`);
+    </script>
+</body>
+</html>
