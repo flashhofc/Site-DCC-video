@@ -189,10 +189,17 @@
         }
 
         function abrirTelaCheia() {
-            const videoSec = document.querySelector('.video-section');
-            if (videoSec && !document.fullscreenElement) videoSec.requestFullscreen().catch(err => {});
-            else if(document.exitFullscreen) document.exitFullscreen();
+    const elem = document.documentElement; // Pega a página inteira
+    if (!document.fullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
         }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
 
         function onYouTubeIframeAPIReady() {
             try {
